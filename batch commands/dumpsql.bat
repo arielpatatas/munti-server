@@ -1,0 +1,1 @@
+mysqldump -h localhost -u root db_munti > ../database/db_munti.sql
