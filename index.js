@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const formidable = require('formidable');
 var uniqid = require('uniqid');
+const config = require('./config/config');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -36,7 +37,7 @@ function uploadPhoto(req,res,next){
         let newImageName = uniqid()+'.'+ file.name.split('.').pop();
         workspaceImagePath = __dirname + '/images/workspace/' + newImageName;
         file.path = workspaceImagePath;
-        workspaceImagePath = 'http://localhost:3000/images/workspace/' + newImageName;
+        workspaceImagePath =  newImageName;
     });
 
     form.on('file', function (name, file){
@@ -110,16 +111,16 @@ app.get('/user/:id',verifyToken,(req,res)=>{
 
 app.post('/workspace',[verifyToken,uploadPhoto], (req,res)=>{
     req.body['user_id'] = req.token.user_id;
+    console.log(req.body)
     let sql = "INSERT INTO workspace SET ?";
     conn.query(sql,[req.body], (err,result) =>{
-        console.log(result.space_id);
+        console.log(result);
         let sql2 = "INSERT INTO availability SET ?";
         conn.query(sql2, {space_id: result.space_id}, (err, result) => {
-            
+            res.json({message: "product inserted"});  
         });
 
         if(err) throw err;
-        res.json({message: "workspace inserted"});
     });
 }); 
 
@@ -137,6 +138,9 @@ app.get('/workspace', (req,res)=>{
     let sql = "SELECT * FROM workspace WHERE isVerify = 1 ORDER BY space_id Desc";
     conn.query(sql,(err,result)=>{
         if(err) throw err;
+        result.forEach((element,index) => {
+            result[index].workspace_image = config.ip+"/images/workspace/" + result[index].workspace_image; 
+        });
         res.json(result);
     });
 });
@@ -286,6 +290,54 @@ app.post('/opening-hours', verifyToken, (req, res) => {
         res.json({message: "Success!"});
     });
 });
+
+app.get('/type', (req,res)=>{
+    let sql = "SELECT * FROM workspace inner join stores on workspace.store_id = stores.id where workspace.type= ?";
+    conn.query(sql, [req.query.type],(err,result)=>{
+        if(err) throw err;
+        result.forEach((element,index) => {
+            result[index].workspace_image =  config.ip+"/images/workspace/" + result[index].workspace_image; 
+        });
+       
+        res.json(result);
+    });
+});
+
+
+app.get('/store',(req,res)=>{
+    let sql = 'SELECT * FROM stores';
+    conn.query(sql,(err,result)=>{
+        if(err) throw err;
+        console.log(result)
+        res.json(result);
+    });
+});
+
+app.get("/products/:id", (req,res) => {
+    
+    let sql = "SELECT * FROM workspace inner join stores on workspace.store_id = stores.id WHERE store_id = ?";
+    console.log(sql);
+    conn.query(sql, [req.params.id], (err, results) => {
+        if(err) throw err;
+        results.forEach((element,index) => {
+            results[index].workspace_image =  config.ip+"/images/workspace/" + results[index].workspace_image; 
+        });
+       
+        res.json(results);
+        
+    });
+})
+
+app.get("/lowestCost", (req,res)=>{
+    let sql = "SELECT * FROM stores INNER JOIN workspace ON stores.id = workspace.store_id WHERE workspace.title = ? ORDER BY workspace.rate ASC LIMIT 10";
+    conn.query(sql, [req.query.title], (err, results) => {
+        if(err) throw err; 
+        results.forEach((element,index) => {
+            results[index].workspace_image =  config.ip+"/images/workspace/" + results[index].workspace_image; 
+        });
+        res.json(results);
+    })
+})
 
 function verifyToken(req,res,next){
     res.setHeader('Content-type','Application/json');
