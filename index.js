@@ -339,6 +339,17 @@ app.get("/lowestCost", (req,res)=>{
     })
 })
 
+app.get("/searchProduct", (req,res)=>{
+    let sql = "SELECT * FROM workspace WHERE store_id = ? AND title like '%"+req.query.title+"%'";
+    conn.query(sql, [req.query.store_id], (err, results)=>{
+        if (err) throw err;
+        results.forEach((element,index) => {
+            results[index].workspace_image =  config.ip+"/images/workspace/" + results[index].workspace_image; 
+        });
+        res.json(results);
+    })
+})
+
 function verifyToken(req,res,next){
     res.setHeader('Content-type','Application/json');
     const bearerHeader = req.headers['authorization'];
