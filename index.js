@@ -21,7 +21,7 @@ const secretKey = "ver";
 const conn = mysql.createConnection({
     host     : 'sql179.main-hosting.eu',
     user     : 'u951598614_ariel',
-    password : 'ariel',
+    password : '6n7yxriIj1jx',
     database : 'u951598614_munti'
 });
 
