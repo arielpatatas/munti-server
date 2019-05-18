@@ -57,7 +57,7 @@ function uploadPhoto(req,res,next){
 conn.connect();
 
 //Create server
-app.listen(3000,()=>{
+app.listen(8080,()=>{
     console.log('Server started on port 3000');
 });
 

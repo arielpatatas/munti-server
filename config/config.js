@@ -1,3 +1,3 @@
 module.exports= {
-    ip:"http://192.168.100.5:3000"
+    ip:"https://munti-server.herokuapp.com/"
 }
