@@ -76,7 +76,8 @@ app.post('/login',(req,res)=>{
                     user_id : result[0].user_id,
                     firstname: result[0].firstname,
                     lastname: result[0].lastname,
-                    email: result[0].email
+                    email: result[0].email,
+                    Type: result[0].Type
                 };
                 res.json({token: jwt.sign(payload,secretKey)});
             } else {
@@ -99,7 +100,8 @@ app.post('/signup',(req,res)=>{
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             user_id: result.insertId,
-            emai: req.body.emai
+            emai: req.body.emai,
+            Type: req.body.Type
         };
         res.json({token: jwt.sign(payload,secretKey)});
     });
