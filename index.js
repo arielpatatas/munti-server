@@ -57,8 +57,12 @@ function uploadPhoto(req,res,next){
 conn.connect();
 
 //Create server
-app.listen(8080,()=>{
+const PORT = process.env.PORT || 8080
+
+app.listen(PORT,()=>{
+    
     console.log('Server started on port 3000');
+
 });
 
 
@@ -137,7 +141,7 @@ app.post('/workspace/book',verifyToken,(req,res)=>{
 app.get('/workspace', (req,res)=>{
     let sql = "SELECT * FROM workspace WHERE isVerify = 1 ORDER BY space_id Desc";
     conn.query(sql,(err,result)=>{
-        if(err) throw err;
+        if(err) throw err; 
         result.forEach((element,index) => {
             result[index].workspace_image = config.ip+"/images/workspace/" + result[index].workspace_image; 
         });
