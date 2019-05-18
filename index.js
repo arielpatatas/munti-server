@@ -20,8 +20,8 @@ const secretKey = "ver";
 
 const conn = mysql.createConnection({
     host     : 'localhost',
-    user     : 'ariel',
-    password : 'arielsuperpogi143',
+    user     : 'root',
+    password : '',
     database : 'db_munti'
 });
 
